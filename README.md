@@ -2,6 +2,8 @@
 
 只读地翻看 **asar / zip** 归档内部：列条目、读单个条目、按正则搜内容。零依赖、不写盘、不联网。
 
+> 不想看代码？读 [PLAIN.zh.md](PLAIN.zh.md)：一页纸讲清它做什么、不做什么、会碰你什么、怎么退回去。
+
 给 DeepSeek Harness（dsh）用的 Host 插件，注册三个模型侧工具：`archive_list`、`archive_read`、`archive_grep`。
 
 ## 为什么有这个东西
@@ -71,10 +73,20 @@ dsh plugin --profile web add D:\path\to\dsh-plugin-archive-reader
 
 `package.json` 声明了 `peerDependencies: { "@deepseek-ai/dsh": ">=0.2.0-rc.1" }`，与 dsh 运行时不匹配时会被 Harness 的兼容性检查拒绝加载（可用 `dsh plugin allow-version` 写精确版本豁免）。插件本身不 import 任何 Harness 包，因此不依赖 dsh 安装树里的包解析。
 
+## 怎么确认它没骗你
+
+不用读代码也能验证：
+
+1. **双击 `verify.bat`**（Windows）——跑完全部测试，最后一行给出"通过 / 失败"的结论；失败时写出 `verify-output.txt` 供排查。等价命令：`node scripts/verify.mjs`。
+2. **问四个问题**——它改不改我的文件？联网吗？依赖谁？怎么退回去？答案：不改（只读打开）、不联网、零依赖、一条卸载命令。
+
+（CI 也会在 Ubuntu 与 Windows、Node 20 与 22 上重跑同一套测试，工作流文件尚未启用——推送它需要带 `workflow` 权限的凭据。）
+
 ## 开发与验证
 
 ```bash
-node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs
+node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs test/contract.test.mjs
+node scripts/verify.mjs   # 同上，但用人话汇报结果，给不看代码的人用
 ```
 
 覆盖范围：
@@ -84,7 +96,7 @@ node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs
 - **插件契约**：用 stub ctx 加载真实入口 `apply()`，确认注册了三个工具、返回值覆盖 `output.schema.required` 的全部字段、`dispose` 能清理注册。
 - **schema 方言**：三个工具的 `parameters` 与 `output.schema` 已用 Harness 自己的 `assertSupportedJsonSchema`（自 `@deepseek-ai/dsh-tools` 提取）逐一校验通过——即注册时不会因 schema 不受支持而失败。
 
-未做的一步：没有把插件装进本机 profile 跑一次真实会话调用。安装与端到端验证请按上面的安装步骤进行。
+端到端验证状态：已在真实的 Harness 会话里跑过两次工具调用——一次装的是本地链接，一次是从本仓库 GitHub 地址装来的副本（`archive_grep` 命中 `app.asar` 内已知文本；`archive_list` 按正则筛出 15 个条目）。Desktop 图形界面下的调用未实测。
 
 ## License
 
@@ -100,4 +112,4 @@ MIT
 dsh plugin --profile web add D:\path\to\dsh-plugin-archive-reader
 ```
 
-Restart dsh fully after installing. Run the test suite with `node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs`.
+Restart dsh fully after installing. Run the test suite with `node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs test/contract.test.mjs`, or double-click `verify.bat` for a plain-language summary. Non-programmers: see [PLAIN.zh.md](PLAIN.zh.md).
