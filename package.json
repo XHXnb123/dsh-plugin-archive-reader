@@ -1,0 +1,55 @@
+{
+  "name": "dsh-plugin-archive-reader",
+  "version": "0.1.0",
+  "description": "只读地翻看 asar / zip 归档内部：列条目、读单个条目、按正则搜内容。零依赖、纯只读，不写盘。",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "src",
+    "locale",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "icon.svg"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.0-rc.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "icon": "./icon.svg",
+  "scripts": {
+    "test": "node --test test/asar.test.mjs test/zip.test.mjs test/plugin.test.mjs test/contract.test.mjs",
+    "check": "node --check src/index.mjs && node --check src/lib/asar.mjs && node --check src/lib/zip.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "cordis",
+    "archive",
+    "asar",
+    "zip",
+    "read-only"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XHXnb123/dsh-plugin-archive-reader.git"
+  },
+  "homepage": "https://github.com/XHXnb123/dsh-plugin-archive-reader",
+  "bugs": {
+    "url": "https://github.com/XHXnb123/dsh-plugin-archive-reader/issues"
+  }
+}

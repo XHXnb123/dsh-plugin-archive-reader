@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Archive Reader",
+    "description": "Read inside asar and zip archives: list entries, read one entry, grep contents. Read-only."
+  }
+}

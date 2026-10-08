@@ -1,0 +1,5 @@
+# dsh-plugin-archive-reader — 插入归档读取工具行
+- insert:
+    - id: archive-reader
+      name: 'dsh-plugin-archive-reader'
+      config: {}
